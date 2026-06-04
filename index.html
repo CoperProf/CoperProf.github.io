@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashLearn - Apprendre comme Quizlet</title>
+    <title>EcoFlash - Révision Économie</title>
     <style>
         :root {
-            --primary: #4255ff;
-            --primary-hover: #2b3de6;
-            --bg: #f6f7fb;
-            --text: #303545;
+            --primary: #0056b3;
+            --primary-hover: #004085;
+            --bg: #f8f9fa;
+            --text: #212529;
             --card-bg: #ffffff;
+            --accent: #e9ecef;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         body {
@@ -30,25 +31,25 @@
         }
 
         header {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         header h1 {
             color: var(--primary);
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 5px;
         }
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
         }
 
-        /* --- Zone de Flashcard --- */
+        /* --- Flashcard Zone --- */
         .card-container {
             perspective: 1000px;
-            height: 300px;
+            height: 280px;
             cursor: pointer;
             margin-bottom: 20px;
         }
@@ -58,9 +59,9 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            border-radius: 20px;
+            transition: transform 0.5s ease;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            border-radius: 15px;
         }
 
         .flashcard.flipped {
@@ -75,22 +76,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 15px;
             background: var(--card-bg);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             text-align: center;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #dee2e6;
+            overflow-y: auto;
         }
 
         .card-back {
             transform: rotateY(180deg);
-            background: linear-gradient(135deg, #f5f7ff 0%, #e8ecff 100%);
-            color: var(--primary);
+            background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+            color: #1c7ed6;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
-        /* --- Contrôles --- */
+        /* --- Navigation & Controls --- */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -102,10 +106,10 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
+            padding: 10px 20px;
+            font-size: 0.95rem;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background 0.2s;
         }
@@ -115,115 +119,176 @@
         }
 
         button:disabled {
-            background-color: #cccccc;
+            background-color: #ced4da;
             cursor: not-allowed;
         }
 
         #progress {
             font-weight: 600;
-            color: #646f8a;
+            color: #495057;
         }
 
-        /* --- Mode Quiz --- */
+        /* --- Quiz Zone --- */
         .quiz-section {
             background: var(--card-bg);
             padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-            margin-top: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            margin-top: 10px;
+            border: 1px solid #dee2e6;
         }
 
         .quiz-section h3 {
             margin-bottom: 15px;
             font-size: 1.2rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 8px;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-top: 15px;
         }
 
         .option-btn {
-            background-color: #f0f2f9;
+            background-color: #f8f9fa;
             color: var(--text);
             text-align: left;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 8px;
             font-weight: 500;
+            border: 1px solid #ced4da;
         }
 
         .option-btn:hover {
-            background-color: #e4e8f7;
+            background-color: #e9ecef;
         }
 
         .correct {
-            background-color: #2ed573 !important;
-            color: white;
+            background-color: #2b8a3e !important;
+            color: white !important;
+            border-color: #2b8a3e !important;
         }
 
         .wrong {
-            background-color: #ff4757 !important;
-            color: white;
+            background-color: #c92a2a !important;
+            color: white !important;
+            border-color: #c92a2a !important;
         }
 
-        .score-display {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #2ed573;
+        .next-quiz-container {
+            display: flex;
+            justify-content: flex-end;
             margin-top: 15px;
-            display: none;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>FlashLearn</h1>
-        <p>Apprends tes définitions en t'amusant</p>
+        <h1>EcoFlash</h1>
+        <p>Bachelier 2 - Introduction et Notions de Base en Économie</p>
     </header>
 
     <div class="container">
+        <!-- Flashcard -->
         <div class="card-container" onclick="flipCard()">
             <div class="flashcard" id="card">
-                <div class="card-face card-front" id="card-front">Terme</div>
+                <div class="card-face card-front" id="card-front">Concept</div>
                 <div class="card-face card-back" id="card-back">Définition</div>
             </div>
         </div>
 
+        <!-- Navigation Flashcards -->
         <div class="controls">
             <button id="prev-btn" onclick="prevCard()">Précédent</button>
-            <span id="progress">1 / 5</span>
+            <span id="progress">1 / --</span>
             <button id="next-btn" onclick="nextCard()">Suivant</button>
         </div>
 
-        <hr style="border: 0; height: 1px; background: #dcdde1; margin: 40px 0;">
+        <hr style="border: 0; height: 1px; background: #dee2e6; margin: 30px 0;">
 
+        <!-- Zone d'entraînement illimitée -->
         <div class="quiz-section">
-            <h3>Mode Entraînement / Quiz</h3>
-            <div id="quiz-question" style="font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">Question ici...</div>
-            <div class="options-grid" id="quiz-options">
-                </div>
-            <div class="score-display" id="score-text"></div>
+            <h3>Mode Entraînement Aléatoire (Infini)</h3>
+            <div id="quiz-question" style="font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">Chargement...</div>
+            <div class="options-grid" id="quiz-options"></div>
+            <div class="next-quiz-container">
+                <button id="next-quiz-btn" style="display: none;" onclick="generateQuiz()">Question Suivante →</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- DONNÉES DES CARTES (Tu peux les modifier ici !) ---
+        // --- BASE DE DONNÉES COMPLÈTE DES 50 QUESTIONS/CONCEPTS DU COURS ---
         const flashcards = [
-            { term: "Navigateur Web", definition: "Un logiciel qui permet de consulter des pages web (ex: Chrome, Firefox)." },
-            { term: "HTML", definition: "Le langage de balisage utilisé pour structurer le contenu d'une page web." },
-            { term: "CSS", definition: "Le langage utilisé pour styliser et mettre en page les documents HTML." },
-            { term: "JavaScript", definition: "Un langage de programmation qui rend les pages web interactives et dynamiques." },
-            { term: "Serveur", definition: "Un ordinateur puissant qui stocke et distribue les données d'un site web aux utilisateurs." }
+            // Chapitre 1
+            { term: "L'Économie", definition: "Science sociale qui s'intéresse au phénomène de la rareté et à l'affectation optimale des ressources rares." },
+            { term: "Problème économique fondamental", definition: "La confrontation entre nos besoins illimités et nos ressources limitées (rares)." },
+            { term: "Microéconomie", definition: "Échelle d'analyse qui étudie les comportements individuels des agents économiques (un ménage, une entreprise)." },
+            { term: "Macroéconomie", definition: "Échelle d'analyse qui étudie l'économie de manière globale au niveau d'un pays ou du monde via des agrégats." },
+            { term: "Agrégats", definition: "Variables globales étudiées en macroéconomie, telles que l'emploi total ou la production nationale." },
+            { term: "Un besoin", definition: "Une sensation de manque ou de privation qu'un individu cherche à faire disparaître." },
+            { term: "Besoins primaires", definition: "Besoins indispensables à la survie et vitaux (manger, boire)." },
+            { term: "Besoins secondaires", definition: "Besoins non vitaux qui relèvent du confort ou du bien-être." },
+            { term: "Biens libres", definition: "Biens fournis par la nature en abondance, gratuits, non rares et sans travail humain." },
+            { term: "Biens économiques", definition: "Biens rares, limités, issus de l'activité humaine et ayant un coût ou un prix." },
+            { term: "Biens immatériels", definition: "Services consommés en même temps qu'ils sont produits." },
+            { term: "Biens matériels", definition: "Produits physiques, palpables et stockables." },
+            { term: "Bien de consommation", definition: "Acheté par un ménage pour satisfaire directement un besoin. Catégorie définie par l'utilisateur final." },
+            { term: "Bien de production", definition: "Utilisé par une entreprise pour fabriquer d'autres biens et services." },
+            { term: "Inputs (Facteurs de production)", definition: "Matières premières, ressources naturelles, travail (capital humain) et capital (machines) combinés pour produire." },
+            { term: "Output", definition: "Le résultat final de l'activité de production d'une entreprise (bien ou service fini)." },
+            { term: "Utilité marginale", definition: "La satisfaction supplémentaire apportée par la consommation d'une unité de plus d'un bien." },
+            { term: "Loi de l'utilité marginale décroissante", definition: "Plus on consomme un bien, plus la satisfaction apportée par chaque unité supplémentaire diminue." },
+            { term: "Rendement marginal", definition: "La production supplémentaire obtenue en ajoutant une unité de facteur variable (ex: un ouvrier supplémentaire)." },
+            { term: "Loi des rendements marginaux non proportionnels", definition: "Sur un capital fixe, ajouter du travail fait augmenter la production marginale jusqu'à un maximum, puis elle décroît." },
+            { term: "Système Communiste (Marx)", definition: "Organisation basée sur l'autorité collective, la planification centrale par l'État et la propriété collective des moyens de production." },
+            { term: "Système Capitaliste (Smith)", definition: "Organisation basée sur l'initiative individuelle, le mécanisme du marché libre, la propriété privée et la recherche du profit." },
+            { term: "Système Intermédiaire (Keynes)", definition: "Économie mixte où les individus agissent librement mais l'État intervient de manière contra-cyclique." },
+            { term: "Administrations Publiques (L'État)", definition: "Agent économique dont la fonction principale est de produire des services non marchands et de gérer la redistribution." },
+            { term: "ISBLSM", definition: "Institutions Sans But Lucratif au Service des Ménages (monde associatif, syndicats)." },
+            
+            // Chapitre 2
+            { term: "Démographie", definition: "L'étude de la population, de son taux de croissance, de son renouvellement et de sa répartition." },
+            { term: "Solde naturel", definition: "La différence absolue entre le nombre de naissances et le nombre de décès (Naissances - Décès)." },
+            { term: "Solde migratoire", definition: "La différence absolue entre les entrants et les sortants d'un pays (Immigration - Émigration)." },
+            { term: "Taux d'accroissement (en %)", definition: "Somme du solde naturel et du solde migratoire divisée par la population au début de l'année." },
+            { term: "Espérance de vie", definition: "Durée de vie moyenne d'une génération fictive caractérisant la mortalité de l'année en cours." },
+            { term: "Théorie de Keynes (Consommation)", definition: "La consommation augmente avec le revenu, mais la part épargnée augmente encore plus vite." },
+            { term: "Effet d'inertie de Brown", definition: "La consommation s'adapte au revenu avec retard en raison de la fidélité aux habitudes passées (effet de cliquet)." },
+            { term: "Revenu permanent (Friedman)", definition: "La consommation est une part constante du revenu moyen espéré sur le long terme." },
+            { term: "Modèle du cycle de vie (Modigliani)", definition: "La consommation est stable sur la vie : on s'endette jeune, on épargne actif, on désépargne à la retraite." },
+            { term: "Population active", definition: "Ensemble des personnes en âge, capables et désireuses de travailler (comprend les actifs occupés et les chômeurs)." },
+            { term: "Chômage structurel", definition: "Inadéquation globale et durable entre l'offre et la demande d'emploi, persistante même en période de croissance." },
+            { term: "Axiome de transitivité", definition: "Règle de rationalité impliquant que si un consommateur préfère le panier X au panier Y, et Y à Z, alors il préfère X à Z." },
+            { term: "Courbe d'indifférence", definition: "Ligne reliant toutes les combinaisons de deux biens procurant exactement le même niveau de satisfaction au consommateur." },
+            { term: "Taux Marginal de Substitution (TMS)", definition: "Quantité d'un Bien Y qu'un consommateur est prêt à sacrifier pour obtenir une unité de Bien X en gardant la même satisfaction." },
+            { term: "Équation de droite de budget", definition: "R = (Pp * Qp) + (Pr * Qr). Délimite la frontière stricte entre les paniers accessibles et inaccessibles." },
+            { term: "Équilibre du consommateur", definition: "Point de tangence géométrique optimal où le TMS est égal au rapport des prix des deux biens (Pp/Pr)." },
+            { term: "Élasticité de la demande", definition: "Mesure de la sensibilité de la quantité demandée d'un bien face à une variation de son prix." },
+            { term: "Demande parfaitement inélastique", definition: "La quantité demandée ne bouge pas du tout peu importe le prix. Droite verticale (ex: médicament vital)." },
+            
+            // Chapitre 3
+            { term: "Valeur Ajoutée (VA)", definition: "Richesse réelle créée par l'entreprise (Valeur des produits finis - Valeur des matières premières utilisées)." },
+            { term: "Produit Intérieur Brut (PIB)", definition: "Somme de toutes les valeurs ajoutées créées par les agents économiques résidents d'un pays en un an." },
+            { term: "Productivité Marginale (Pm)", definition: "Le supplément de production obtenu grâce à l'utilisation d'une unité supplémentaire de facteur de production (ΔQ / ΔT)." },
+            { term: "Rendements d'échelle croissants", definition: "L'accroissement de la production est supérieur à l'accroissement proportionnel des inputs (ex: inputs doublés = production triplée)." },
+            { term: "Isoquant", definition: "Courbe technique descendante et convexe reliant toutes les combinaisons de K et T permettant d'atteindre le même niveau d'Output." },
+            { term: "Isocoût", definition: "Droite financière représentant toutes les combinaisons de facteurs (K et T) ayant exactement le même coût total." },
+            { term: "Seuil de rentabilité (en unités)", definition: "Quantité minimale de pièces à vendre pour couvrir l'ensemble des charges : Coûts Fixes / (Prix Unitaire - Coût Variable Unitaire)." },
+            
+            // Chapitre 4
+            { term: "Loi de la demande", definition: "Plus le prix d'un bien augmente, plus la quantité demandée diminue, en raison des effets de revenu et de substitution." },
+            { term: "Loi de l'offre", definition: "Plus le prix d'un bien est élevé, plus la quantité offerte par les producteurs sur le marché est importante." },
+            { term: "Atomicité du marché", definition: "Condition de CPP où le nombre d'acheteurs et de vendeurs est si grand qu'aucun ne peut influencer le prix à lui seul." }
         ];
 
         let currentIndex = 0;
-        let score = 0;
 
-        // Éléments DOM
+        // Éléments HTML
         const cardEl = document.getElementById('card');
         const frontEl = document.getElementById('card-front');
         const backEl = document.getElementById('card-back');
@@ -233,22 +298,19 @@
         
         const quizQuestionEl = document.getElementById('quiz-question');
         const quizOptionsEl = document.getElementById('quiz-options');
-        const scoreTextEl = document.getElementById('score-text');
+        const nextQuizBtn = document.getElementById('next-quiz-btn');
 
-        // --- FONCTIONS FLASHCARDS ---
+        // --- GESTION DES FLASHCARDS ---
         function updateCard() {
-            // Remettre la carte à l'endroit avant de changer le texte
             cardEl.classList.remove('flipped');
-            
             setTimeout(() => {
                 frontEl.textContent = flashcards[currentIndex].term;
                 backEl.textContent = flashcards[currentIndex].definition;
                 progressEl.textContent = `${currentIndex + 1} / ${flashcards.length}`;
                 
-                // Activer/Désactiver boutons
                 prevBtn.disabled = currentIndex === 0;
                 nextBtn.disabled = currentIndex === flashcards.length - 1;
-            }, 150); // Petit délai pour l'effet visuel
+            }, 120);
         }
 
         function flipCard() {
@@ -269,27 +331,33 @@
             }
         }
 
-        // --- FONCTIONS QUIZ ---
+        // --- GESTION DU QUIZ INFINI ALÉATOIRE ---
         function generateQuiz() {
-            const currentQuestion = flashcards[currentIndex];
-            quizQuestionEl.textContent = `Que signifie : "${currentQuestion.term}" ?`;
+            nextQuizBtn.style.display = 'none';
+            
+            // Sélectionner une question au hasard dans toute la base
+            const randomIndex = Math.floor(Math.random() * flashcards.length);
+            const currentQuestion = flashcards[randomIndex];
+            
+            quizQuestionEl.textContent = `Quelle est la définition exacte du concept suivant : "${currentQuestion.term}" ?`;
             quizOptionsEl.innerHTML = '';
-            scoreTextEl.style.display = 'none';
 
-            // Mélanger les réponses (la bonne + 2 fausses au hasard)
+            // Construire un set de réponses (la bonne + 3 fausses)
             let options = [currentQuestion.definition];
-            let wrongOptions = flashcards
+            
+            // Extraire toutes les autres définitions possibles
+            let wrongDefinitions = flashcards
                 .filter(card => card.definition !== currentQuestion.definition)
                 .map(card => card.definition);
             
-            // Prendre maximum 2 fausses réponses au hasard
-            wrongOptions.sort(() => 0.5 - Math.random());
-            options.push(...wrongOptions.slice(0, 2));
+            // Prendre 3 mauvaises définitions au hasard
+            wrongDefinitions.sort(() => 0.5 - Math.random());
+            options.push(...wrongDefinitions.slice(0, 3));
             
-            // Mélanger le tableau final d'options
+            // Mélanger le groupe final des 4 options
             options.sort(() => 0.5 - Math.random());
 
-            // Créer les boutons d'options
+            // Injecter les boutons d'options
             options.forEach(option => {
                 const button = document.createElement('button');
                 button.className = 'option-btn';
@@ -301,29 +369,24 @@
 
         function checkAnswer(selectedButton, selectedOption, correctOption) {
             const allButtons = quizOptionsEl.querySelectorAll('.option-btn');
-            
-            // Désactiver tous les boutons après le clic
-            allButtons.forEach(btn => btn.disabled = true);
+            allButtons.forEach(btn => btn.disabled = true); // Bloquer les clics
 
             if (selectedOption === correctOption) {
                 selectedButton.classList.add('correct');
-                score++;
             } else {
                 selectedButton.classList.add('wrong');
-                // Montrer quand même la bonne réponse
+                // Révéler la bonne réponse en vert
                 allButtons.forEach(btn => {
                     if (btn.textContent === correctOption) btn.classList.add('correct');
                 });
             }
+            // Afficher le bouton pour charger la question suivante
+            nextQuizBtn.style.display = 'block';
         }
 
-        // Initialisation au chargement de la page
+        // Initialisation automatique au chargement
         updateCard();
         generateQuiz();
-
-        // Écouter les changements de cartes pour mettre à jour le quiz aussi
-        nextBtn.addEventListener('click', generateQuiz);
-        prevBtn.addEventListener('click', generateQuiz);
     </script>
 </body>
 </html>
